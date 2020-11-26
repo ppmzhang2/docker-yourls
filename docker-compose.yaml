@@ -3,8 +3,11 @@ version: '3'
 services:
   mysql:
     image: mysql:5.7
-    env_file:
-      - env.mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpassword}
+      - MYSQL_USER=${MYSQL_USER:-yourls}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-mysecretpassword}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-yourls}
     volumes:
       - ./volumes/var/lib/mysql:/var/lib/mysql:rw
       - ./volumes/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
@@ -24,8 +27,21 @@ services:
     image: guessi/docker-yourls:1.7.9
     links:
       - mysql:mysql
-    env_file:
-      - env.yourls
+    environment:
+      - YOURLS_DB_USER=${MYSQL_USER:-yourls}
+      - YOURLS_DB_PASS=${MYSQL_PASSWORD:-mysecretpassword}
+      - YOURLS_DB_NAME=${MYSQL_DATABASE:-yourls}
+      - YOURLS_DB_PREFIX=${YOURLS_DB_PREFIX:-yourls_}
+      - YOURLS_DB_HOST=${YOURLS_DB_HOST:-mysql}
+      - YOURLS_SITE=${YOURLS_SITE:-http://localhost}
+      - YOURLS_COOKIEKEY=${YOURLS_COOKIEKEY:-63d8cd986cded909158fcc00}
+      - YOURLS_ADMIN_USERNAME=${YOURLS_ADMIN_USERNAME:-admin}
+      - YOURLS_ADMIN_PASSWORD=${YOURLS_ADMIN_PASSWORD:-yourlspassword}
+      - YOURLS_HOURS_OFFSET=${YOURLS_HOURS_OFFSET:-0}
+      - YOURLS_LANG=${YOURLS_LANG:-}
+      - YOURLS_UNIQUE_URLS=${YOURLS_UNIQUE_URLS:-true}
+      - YOURLS_PRIVATE=${YOURLS_PRIVATE:-true}
+      - YOURLS_URL_CONVERT=${YOURLS_URL_CONVERT:-36}
     ports:
       - 80:80
     depends_on:
